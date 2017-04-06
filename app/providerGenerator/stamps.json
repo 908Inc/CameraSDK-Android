@@ -1,0 +1,26 @@
+{
+  "documentation": "Stamps",
+  "fields": [
+    {
+      "documentation": "Content id from server",
+      "name": "stamp_id",
+      "type": "Integer"
+    },
+    {
+      "documentation": "Stamp image link",
+      "name": "link",
+      "type": "String"
+    },
+    {
+      "documentation": "Stamps set id",
+      "name": "stamps_set_id",
+      "type": "Integer",
+    }
+  ],
+  "constraints": [
+    {
+      "name": "unique_action",
+      "definition": "UNIQUE (stamp_id) ON CONFLICT REPLACE"
+    }
+  ]
+}

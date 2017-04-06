@@ -1,0 +1,56 @@
+{
+  "documentation": "Story stamps",
+  "fields": [
+    {
+      "documentation": "Stamp id from server",
+      "name": "stamp_id",
+      "type": "Integer"
+    },
+    {
+      "documentation": "Image link",
+      "name": "link",
+      "type": "String"
+    },
+    {
+      "documentation": "Control points",
+      "name": "points",
+      "type": "String"
+    },
+    {
+      "documentation": "Stamp type",
+      "name": "type",
+      "type": "String"
+    },
+    {
+      "documentation": "Stamp rotation",
+      "name": "rotation",
+      "type": "Integer"
+    },
+    {
+      "documentation": "Stamp scale",
+      "name": "scale",
+      "type": "Float"
+    },
+    {
+      "documentation": "Stamp position type",
+      "name": "position_type",
+      "type": "String"
+    },
+    {
+      "documentation": "Stamp order for current story",
+      "name": "stamp_order",
+      "type": "Integer"
+    },
+    {
+      "documentation": "Story id",
+      "name": "story_id",
+      "type": "Integer"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "unique_action",
+      "definition": "UNIQUE (stamp_id) ON CONFLICT REPLACE"
+    }
+  ]
+}

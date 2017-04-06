@@ -1,0 +1,26 @@
+{
+  "documentation": "Stories",
+  "fields": [
+    {
+      "documentation": "Story id from server",
+      "name": "story_id",
+      "type": "Integer"
+    },
+    {
+      "documentation": "Story data hash",
+      "name": "data_hash",
+      "type": "String"
+    },
+    {
+      "documentation": "Story icon link",
+      "name": "icon_link",
+      "type": "String"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "unique_action",
+      "definition": "UNIQUE (story_id) ON CONFLICT REPLACE"
+    }
+  ]
+}

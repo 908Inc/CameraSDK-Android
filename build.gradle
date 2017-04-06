@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
+        classpath 'com.google.gms:google-services:3.0.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+def configsPrivateFile = new File('configs.private.properties')
+def configsCommonFile = new File('configs.common.properties')
+
+Properties props = new Properties()
+try {
+    if (configsPrivateFile.exists()) {
+        props.load(configsPrivateFile.newDataInputStream())
+    } else if (configsCommonFile.exists()) {
+        props.load(configsCommonFile.newDataInputStream())
+    } else {
+        throw new GradleException("Configs file not exists");
+    }
+} catch (Exception ignored) {
+    throw new GradleException("Can't load configs file");
+}
+
+ext.apiKeyProd = props.getProperty("API_KEY_PRODUCTION")
+ext.apiKeyDebug = props.getProperty("API_KEY_DEBUG")
+ext.fabricApiKey = props.getProperty("FABRIC_API_KEY")

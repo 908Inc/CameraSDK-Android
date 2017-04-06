@@ -1,0 +1,13 @@
+{
+    "syntaxVersion": 3,
+    "projectPackageId": "com.stickerpipe.camerasdk",
+    "authority": "com.stickerpipe.camerasdk.dataprovider",
+    "providerJavaPackage": "com.stickerpipe.camerasdk.provider",
+    "providerClassName": "StampsProvider",
+    "sqliteOpenHelperClassName": "StampsSQLiteOpenHelper",
+    "sqliteOpenHelperCallbacksClassName": "StampsSQLiteOpenHelperCallbacks",
+    "databaseFileName": "stamps.db",
+    "databaseVersion": 7,
+    "enableForeignKeys": true,
+    "useAnnotations": true
+}

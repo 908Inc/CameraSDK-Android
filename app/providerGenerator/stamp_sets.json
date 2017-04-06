@@ -1,0 +1,16 @@
+{
+  "documentation": "Set of stamps",
+  "fields": [
+    {
+      "documentation": "Content id from server",
+      "name": "stamps_set_id",
+      "type": "Integer"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "unique_action",
+      "definition": "UNIQUE (stamps_set_id) ON CONFLICT REPLACE"
+    }
+  ]
+}
