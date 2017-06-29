@@ -52,13 +52,24 @@ public class StoryStampsCursor extends AbstractCursor implements StoryStampsMode
     }
 
     /**
-     * Control points
+     * Control point for static stamps
      * Can be {@code null}.
      */
     @Nullable
     @Override
     public String getPoints() {
         String res = getStringOrNull(StoryStampsColumns.POINTS);
+        return res;
+    }
+
+    /**
+     * Offset for dynamic stamps
+     * Can be {@code null}.
+     */
+    @Nullable
+    @Override
+    public String getOffset() {
+        String res = getStringOrNull(StoryStampsColumns.OFFSET);
         return res;
     }
 

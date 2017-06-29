@@ -68,7 +68,7 @@ public class StoryStampsContentValues extends AbstractContentValues {
     }
 
     /**
-     * Control points
+     * Control point for static stamps
      */
     public StoryStampsContentValues putPoints(@Nullable String value) {
         mContentValues.put(StoryStampsColumns.POINTS, value);
@@ -77,6 +77,19 @@ public class StoryStampsContentValues extends AbstractContentValues {
 
     public StoryStampsContentValues putPointsNull() {
         mContentValues.putNull(StoryStampsColumns.POINTS);
+        return this;
+    }
+
+    /**
+     * Offset for dynamic stamps
+     */
+    public StoryStampsContentValues putOffset(@Nullable String value) {
+        mContentValues.put(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsContentValues putOffsetNull() {
+        mContentValues.putNull(StoryStampsColumns.OFFSET);
         return this;
     }
 

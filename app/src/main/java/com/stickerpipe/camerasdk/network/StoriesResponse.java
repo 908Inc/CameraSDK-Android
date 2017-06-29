@@ -62,9 +62,15 @@ public class StoriesResponse extends BaseResponse<List<StoriesResponse.Story>> {
         String type;
 
         @Expose
+        @SerializedName("delta_offset")
+        Point offset;
+
+        @Expose
+        @SerializedName("delta_rotation")
         int rotation;
 
         @Expose
+        @SerializedName("delta_scale")
         float scale;
 
         @Expose

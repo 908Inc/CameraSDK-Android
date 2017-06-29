@@ -193,6 +193,7 @@ public class StorageManager extends PreferenceHelper {
                     .putPositionType(stamp.getPositionType())
                     .putRotation(stamp.getRotation())
                     .putScale(stamp.getScale())
+                    .putOffset(stamp.getOffset())
                     .putStampOrder(stamp.getStampOrder())
                     .putType(stamp.getType());
             values.add(cv.values());

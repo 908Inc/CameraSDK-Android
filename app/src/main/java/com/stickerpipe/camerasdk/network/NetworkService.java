@@ -14,7 +14,7 @@ interface NetworkService {
     @GET("stamps")
     Observable<StampsResponse> getStamps();
 
-    @GET("stories")
+    @GET("new_stories")
     Observable<StoriesResponse> getStories();
 
     @POST("statistics")

@@ -192,4 +192,12 @@
         android:indeterminateDrawable="@drawable/progress"
         android:visibility="gone"/>
 
+    <Button
+        android:id="@+id/reload"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="Reload"
+        android:visibility="gone"/>
+
 </RelativeLayout>

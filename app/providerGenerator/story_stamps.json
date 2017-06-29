@@ -12,8 +12,13 @@
       "type": "String"
     },
     {
-      "documentation": "Control points",
+      "documentation": "Control point for static stamps",
       "name": "points",
+      "type": "String"
+    },
+    {
+      "documentation": "Offset for dynamic stamps",
+      "name": "offset",
       "type": "String"
     },
     {

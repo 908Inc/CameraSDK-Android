@@ -35,9 +35,14 @@ public class StoryStampsColumns implements BaseColumns {
     public static final String LINK = "link";
 
     /**
-     * Control points
+     * Control point for static stamps
      */
     public static final String POINTS = "points";
+
+    /**
+     * Offset for dynamic stamps
+     */
+    public static final String OFFSET = "offset";
 
     /**
      * Stamp type
@@ -77,6 +82,7 @@ public class StoryStampsColumns implements BaseColumns {
             STAMP_ID,
             LINK,
             POINTS,
+            OFFSET,
             TYPE,
             ROTATION,
             SCALE,
@@ -91,6 +97,7 @@ public class StoryStampsColumns implements BaseColumns {
             if (c.equals(STAMP_ID) || c.contains("." + STAMP_ID)) return true;
             if (c.equals(LINK) || c.contains("." + LINK)) return true;
             if (c.equals(POINTS) || c.contains("." + POINTS)) return true;
+            if (c.equals(OFFSET) || c.contains("." + OFFSET)) return true;
             if (c.equals(TYPE) || c.contains("." + TYPE)) return true;
             if (c.equals(ROTATION) || c.contains("." + ROTATION)) return true;
             if (c.equals(SCALE) || c.contains("." + SCALE)) return true;

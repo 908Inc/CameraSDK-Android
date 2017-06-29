@@ -7,7 +7,7 @@
     "sqliteOpenHelperClassName": "StampsSQLiteOpenHelper",
     "sqliteOpenHelperCallbacksClassName": "StampsSQLiteOpenHelperCallbacks",
     "databaseFileName": "stamps.db",
-    "databaseVersion": 7,
+    "databaseVersion": 8,
     "enableForeignKeys": true,
     "useAnnotations": true
 }

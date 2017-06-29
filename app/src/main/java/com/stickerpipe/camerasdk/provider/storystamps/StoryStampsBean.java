@@ -1,6 +1,10 @@
 package com.stickerpipe.camerasdk.provider.storystamps;
 
 // @formatter:off
+import com.stickerpipe.camerasdk.provider.base.BaseModel;
+
+import java.util.Date;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -13,6 +17,7 @@ public class StoryStampsBean implements StoryStampsModel {
     private Integer mStampId;
     private String mLink;
     private String mPoints;
+    private String mOffset;
     private String mType;
     private Integer mRotation;
     private Float mScale;
@@ -72,7 +77,7 @@ public class StoryStampsBean implements StoryStampsModel {
     }
 
     /**
-     * Control points
+     * Control point for static stamps
      * Can be {@code null}.
      */
     @Nullable
@@ -82,11 +87,29 @@ public class StoryStampsBean implements StoryStampsModel {
     }
 
     /**
-     * Control points
+     * Control point for static stamps
      * Can be {@code null}.
      */
     public void setPoints(@Nullable String points) {
         mPoints = points;
+    }
+
+    /**
+     * Offset for dynamic stamps
+     * Can be {@code null}.
+     */
+    @Nullable
+    @Override
+    public String getOffset() {
+        return mOffset;
+    }
+
+    /**
+     * Offset for dynamic stamps
+     * Can be {@code null}.
+     */
+    public void setOffset(@Nullable String offset) {
+        mOffset = offset;
     }
 
     /**
@@ -214,12 +237,13 @@ public class StoryStampsBean implements StoryStampsModel {
      * Instantiate a new StoryStampsBean with specified values.
      */
     @NonNull
-    public static StoryStampsBean newInstance(long id, @Nullable Integer stampId, @Nullable String link, @Nullable String points, @Nullable String type, @Nullable Integer rotation, @Nullable Float scale, @Nullable String positionType, @Nullable Integer stampOrder, @Nullable Integer storyId) {
+    public static StoryStampsBean newInstance(long id, @Nullable Integer stampId, @Nullable String link, @Nullable String points, @Nullable String offset, @Nullable String type, @Nullable Integer rotation, @Nullable Float scale, @Nullable String positionType, @Nullable Integer stampOrder, @Nullable Integer storyId) {
         StoryStampsBean res = new StoryStampsBean();
         res.mId = id;
         res.mStampId = stampId;
         res.mLink = link;
         res.mPoints = points;
+        res.mOffset = offset;
         res.mType = type;
         res.mRotation = rotation;
         res.mScale = scale;
@@ -239,6 +263,7 @@ public class StoryStampsBean implements StoryStampsModel {
         res.mStampId = from.getStampId();
         res.mLink = from.getLink();
         res.mPoints = from.getPoints();
+        res.mOffset = from.getOffset();
         res.mType = from.getType();
         res.mRotation = from.getRotation();
         res.mScale = from.getScale();
@@ -278,11 +303,20 @@ public class StoryStampsBean implements StoryStampsModel {
         }
 
         /**
-         * Control points
+         * Control point for static stamps
          * Can be {@code null}.
          */
         public Builder points(@Nullable String points) {
             mRes.mPoints = points;
+            return this;
+        }
+
+        /**
+         * Offset for dynamic stamps
+         * Can be {@code null}.
+         */
+        public Builder offset(@Nullable String offset) {
+            mRes.mOffset = offset;
             return this;
         }
 

@@ -3,6 +3,8 @@ package com.stickerpipe.camerasdk.ui.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -40,6 +42,7 @@ public class StampImageView extends android.support.v7.widget.AppCompatImageView
     private boolean useForceDown;
     private PorterDuffColorFilter selectedItemColorFilter = new PorterDuffColorFilter(0xffdddddd, PorterDuff.Mode.MULTIPLY);
     private int currentPointersCount;
+    private Paint debugPaint;
 
     public StampImageView(Context context) {
         super(context);
@@ -49,6 +52,8 @@ public class StampImageView extends android.support.v7.widget.AppCompatImageView
     private void init(Context context) {
         mRotationGestureDetector = new RotationGestureDetector(this);
         mScaleGestureDetector = new MyScaleGestureDetector(context, this);
+        debugPaint = new Paint();
+        debugPaint.setColor(Color.parseColor("#ff0000"));
     }
 
     @Override
@@ -173,6 +178,8 @@ public class StampImageView extends android.support.v7.widget.AppCompatImageView
     protected void onDraw(Canvas canvas) {
         canvas.save();
         canvas.rotate(currentRotation, getWidth() / 2, getHeight() / 2);
+//        canvas.drawLine(0,getHeight() / 2, getWidth(), getHeight() / 2, debugPaint);
+//        canvas.drawLine(getWidth() / 2,0, getWidth() / 2, getHeight(), debugPaint);
         super.onDraw(canvas);
         canvas.restore();
         setTag(R.integer.stamp_rotation, currentRotation);

@@ -20,7 +20,7 @@ public class StampsSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = StampsSQLiteOpenHelper.class.getSimpleName();
 
     public static final String DATABASE_FILE_NAME = "stamps.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static StampsSQLiteOpenHelper sInstance;
     private final Context mContext;
     private final StampsSQLiteOpenHelperCallbacks mOpenHelperCallbacks;
@@ -56,6 +56,7 @@ public class StampsSQLiteOpenHelper extends SQLiteOpenHelper {
             + StoryStampsColumns.STAMP_ID + " INTEGER, "
             + StoryStampsColumns.LINK + " TEXT, "
             + StoryStampsColumns.POINTS + " TEXT, "
+            + StoryStampsColumns.OFFSET + " TEXT, "
             + StoryStampsColumns.TYPE + " TEXT, "
             + StoryStampsColumns.ROTATION + " INTEGER, "
             + StoryStampsColumns.SCALE + " REAL, "

@@ -146,6 +146,11 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             init();
         }
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+//        try {
+//            showImageFromInputStream(getAssets().open("1.png"));
+//        } catch (IOException ignored) {
+//            // =)
+//        }
     }
 
     @Override
@@ -408,6 +413,11 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         shareButtonContainer.setTranslationX(buttonsTranslation);
         stampsButton.setTranslationX(buttonsTranslation);
         backToStoriesButton.setTranslationX(-buttonsTranslation);
+        findViewById(R.id.reload).setOnClickListener(v -> reload());
+    }
+
+    private void reload() {
+        NetworkManager.getInstance().requestStoriesUpdate();
     }
 
     private void downloadPhotoToLocalGallery() {
@@ -445,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                         .points(stampsCursor.getPoints())
                         .scale(stampsCursor.getScale())
                         .rotation(stampsCursor.getRotation())
+                        .offset(stampsCursor.getOffset())
                         .stampOrder(stampsCursor.getStampOrder())
                         .build();
                 StampImageView stampView = createStampView(String.valueOf(stampBean.getStampId()), null, stampBean.getLink());
@@ -1021,7 +1032,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         // Create a frame from the bitmap and run face detection on the frame.
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
         SparseArray<Face> faces = safeDetector.detect(frame);
-//        overlay.setContent(faces);
+//        overlay.post(() -> overlay.setContent(faces));
         currentFace = null;
         for (int i = 0; i < faces.size(); ++i) {
             Face face = faces.valueAt(i);
@@ -1239,25 +1250,46 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     }
 
     private boolean positionEyesStamp(StampImageView dynamicStamp, StoryStampsBean stampBean) {
-        return drawStampByTwoLandmarks(dynamicStamp, getCords(stampBean.getPoints()), Landmark.RIGHT_EYE, Landmark.LEFT_EYE);
+        return drawStampByTwoLandmarks(dynamicStamp, getStampDynamicPoints(0), Landmark.RIGHT_EYE, Landmark.LEFT_EYE, stampBean);
+    }
+
+    // 0 - eyes
+    // 1 - mouth
+    private int[] getStampDynamicPoints(int i) {
+        int[] coords = new int[4];
+        int rawStampSize = stampSize - stampPadding * 2;
+        coords[1] = rawStampSize / 2;
+        coords[3] = rawStampSize / 2;
+        switch (i) {
+            case 0:
+                coords[0] = rawStampSize / 4;
+                coords[2] = (rawStampSize / 4) * 3;
+                break;
+            case 1:
+                coords[0] = 0;
+                coords[2] = rawStampSize;
+                break;
+            default:
+        }
+        return coords;
     }
 
     private boolean positionMouthStamp(StampImageView dynamicStamp, StoryStampsBean stampBean) {
-        return drawStampByTwoLandmarks(dynamicStamp, getCords(stampBean.getPoints()), Landmark.RIGHT_MOUTH, Landmark.LEFT_MOUTH);
+        return drawStampByTwoLandmarks(dynamicStamp, getStampDynamicPoints(1), Landmark.RIGHT_MOUTH, Landmark.LEFT_MOUTH, stampBean);
     }
 
-    private boolean drawStampByTwoLandmarks(StampImageView dynamicStamp, @Nullable int[] coords, int leftLandmark, int rightLandmark) {
+    private boolean drawStampByTwoLandmarks(StampImageView dynamicStamp, int[] coords, int leftLandmark, int rightLandmark, StoryStampsBean stampBean) {
         PointF leftPosition = Utils.getLandmarkPosition(currentFace, leftLandmark);
         PointF rightPosition = Utils.getLandmarkPosition(currentFace, rightLandmark);
-        return drawStampByTwoPoints(dynamicStamp, leftPosition, rightPosition, coords);
+        return drawStampByTwoPoints(dynamicStamp, leftPosition, rightPosition, coords, stampBean);
     }
 
-    private boolean drawStampByTwoPoints(StampImageView dynamicStamp, PointF leftPosition, PointF rightPosition, @Nullable int[] coords) {
-        if (leftPosition != null && rightPosition != null && coords != null) {
+    private boolean drawStampByTwoPoints(StampImageView dynamicStamp, PointF leftPosition, PointF rightPosition, int[] coords, StoryStampsBean stampBean) {
+        if (leftPosition != null && rightPosition != null) {
             try {
                 PointF stampLPoint = new PointF(coords[0], coords[1]);
                 PointF stampRPoint = new PointF(coords[2], coords[3]);
-                return positionStamp(dynamicStamp, stampLPoint, stampRPoint, leftPosition, rightPosition);
+                return positionDynamicStamp(dynamicStamp, stampLPoint, stampRPoint, leftPosition, rightPosition, stampBean);
             } catch (ArrayIndexOutOfBoundsException ex) {
                 Logger.w(TAG, "Can't get coordinates");
             }
@@ -1266,49 +1298,47 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     }
 
     private boolean positionStaticStamp(StampImageView stampView, StoryStampsBean stampBean) {
-        try {
-            PointF point = new PointF();
-            applyStaticPointPosition(point, stampBean.getPositionType());
-            int[] coords = getCords(stampBean.getPoints());
-            if (coords != null) {
-                float scale = stampBean.getScale();
-                int rotation = stampBean.getRotation();
-                PointF translationPoint = new PointF(coords[0], coords[1]);
+        PointF point = new PointF();
+        applyStaticPointPosition(point, stampBean.getPositionType());
 
-                float screenFactor = Utils.getScreenHeightInPx(this) / (640f * getDensity());
-                if (screenFactor != 0) {
-                    if (scale == 0) {
-                        scale = 1;
-                    }
-                    scale = scale * screenFactor;
-                }
-                int stampCenter = (stampSize - stampPadding * 2) / 2;
-                if (rotation > 0) {
-                    translationPoint = Geometry.rotatePoint(translationPoint.x, translationPoint.y, stampCenter, stampCenter, 360 - rotation);
-                }
-                if (scale > 0) {
-                    translationPoint = Geometry.scalePoint(translationPoint.x, translationPoint.y, stampCenter, stampCenter, scale);
-                }
-                float x = point.x - translationPoint.x - stampPadding;
-                float y = point.y - translationPoint.y - stampPadding;
+        float scale = 1;
+        int rotation = 0;
 
-                if (scale > 0) {
-                    stampView.setScale(scale);
-                }
-
-                stampView.setX(x);
-                stampView.setY(y);
-                if (rotation != 0) {
-                    stampView.setDrawingRotation(rotation, false);
-                }
-                return true;
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            Logger.e(TAG, "Can't get item from array");
+        if (stampBean.getScale() != null && stampBean.getScale() != 0) {
+            scale *= stampBean.getScale();
         }
-        return false;
+        if (stampBean.getRotation() != null) {
+            rotation += stampBean.getRotation();
+        }
+
+        float screenFactor = Utils.getScreenHeightInPx(this) / (640f * getDensity());
+        if (screenFactor != 0) {
+            scale *= screenFactor;
+        }
+
+//        int stampCenter = (stampSize - stampPadding * 2) / 2;
+//        if (rotation > 0) {
+//            translationPoint = Geometry.rotatePoint(translationPoint.x, translationPoint.y, stampCenter, stampCenter, 360 - rotation);
+//        }
+//        if (scale > 0) {
+//            translationPoint = Geometry.scalePoint(translationPoint.x, translationPoint.y, stampCenter, stampCenter, scale);
+//        }
+
+        int[] coords = getCords(stampBean.getPoints());
+
+        float x = point.x - coords[0] - stampPadding;
+        float y = point.y - coords[1] - stampPadding;
+
+
+        stampView.setScale(scale);
+        stampView.setX(x);
+        stampView.setY(y);
+        stampView.setDrawingRotation(rotation, false);
+        return true;
+
     }
 
+    // TODO remove this
     private int[] getCords(String json) {
         List<StoriesResponse.Point> points = NetworkManager.getInstance().getGson().fromJson(json, new TypeToken<List<StoriesResponse.Point>>() {
         }.getType());
@@ -1320,7 +1350,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         }
         return result;
     }
-
 
     private void applyStaticPointPosition(PointF point, String position) {
         int screenWidth = Utils.getScreenWidthInPx(this);
@@ -1366,25 +1395,58 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         }
     }
 
-    private boolean positionStamp(StampImageView stampView,
-                                  PointF stampPointA, PointF stampPointB,
-                                  PointF leftPosition, PointF rightPosition) {
+    private boolean positionDynamicStamp(StampImageView stampView,
+                                         PointF stampPointA, PointF stampPointB,
+                                         PointF leftPosition, PointF rightPosition,
+                                         StoryStampsBean stampBean) {
         if (rightPosition != null && leftPosition != null) {
+            // add padding to points
             stampPointA.x += stampPadding;
             stampPointA.y += stampPadding;
             stampPointB.x += stampPadding;
             stampPointB.y += stampPadding;
 
-            float scale = Geometry.calculateScaleFactorByTwoLines(stampPointA, stampPointB, leftPosition, rightPosition);
-            float rotationAngle = Geometry.angleBetween2Lines(stampPointA, stampPointB, leftPosition, rightPosition);
+            // initial values
+            float scale = 1;
+            float rotation = 0;
+            float X = 0;
+            float Y = 0;
 
-            PointF rotatedA = Geometry.rotatePoint(stampPointA.x, stampPointA.y, stampSize / 2, stampSize / 2, rotationAngle);
-            PointF scaledA = Geometry.scalePoint(rotatedA.x, rotatedA.y, stampSize / 2, stampSize / 2, scale);
+            // google vision offsets processing
+            float gvScale = Geometry.calculateScaleFactorByTwoLines(stampPointA, stampPointB, leftPosition, rightPosition);
+            float gvRotation = Geometry.angleBetween2Lines(stampPointA, stampPointB, leftPosition, rightPosition);
+            float targetCenterX = (leftPosition.x + rightPosition.x) / 2;
+            float targetCenterY = (leftPosition.y + rightPosition.y) / 2;
+            float gvOffsetX = targetCenterX - stampSize / 2;
+            float gvOffsetY = targetCenterY - stampSize / 2;
 
+            X += gvOffsetX;
+            Y += gvOffsetY;
+            scale *= gvScale;
+            rotation += gvRotation;
+
+            // troublemaker offsets processing
+            StoriesResponse.Point tmOffset = NetworkManager.getInstance().getGson().fromJson(stampBean.getOffset(), StoriesResponse.Point.class);
+            if (tmOffset != null) {
+                PointF offset = Geometry.rotatePoint(tmOffset.x, tmOffset.y, 0, 0, gvRotation);
+                offset.x *= gvScale * getDensity();
+                offset.y *= gvScale * getDensity();
+                if (stampBean.getScale() != null && stampBean.getScale() != 0) {
+                    scale *= stampBean.getScale();
+                }
+                if (stampBean.getRotation() != null) {
+                    rotation -= stampBean.getRotation();
+                }
+                X += offset.x;
+                Y += offset.y;
+            }
+
+
+            // final applying
             stampView.setScale(scale);
-            stampView.setDrawingRotation(-rotationAngle, false);
-            stampView.setX(leftPosition.x - scaledA.x);
-            stampView.setY(leftPosition.y - scaledA.y);
+            stampView.setDrawingRotation(-rotation, false);
+            stampView.setX(X);
+            stampView.setY(Y);
             return true;
         }
         return false;

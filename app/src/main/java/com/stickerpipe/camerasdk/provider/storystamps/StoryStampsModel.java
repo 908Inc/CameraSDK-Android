@@ -34,11 +34,18 @@ public interface StoryStampsModel extends BaseModel {
     String getLink();
 
     /**
-     * Control points
+     * Control point for static stamps
      * Can be {@code null}.
      */
     @Nullable
     String getPoints();
+
+    /**
+     * Offset for dynamic stamps
+     * Can be {@code null}.
+     */
+    @Nullable
+    String getOffset();
 
     /**
      * Stamp type

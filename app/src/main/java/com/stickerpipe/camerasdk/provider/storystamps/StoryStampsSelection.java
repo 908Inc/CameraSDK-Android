@@ -200,6 +200,46 @@ public class StoryStampsSelection extends AbstractSelection<StoryStampsSelection
         return this;
     }
 
+    public StoryStampsSelection offset(String... value) {
+        addEquals(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsSelection offsetNot(String... value) {
+        addNotEquals(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsSelection offsetLike(String... value) {
+        addLike(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsSelection offsetContains(String... value) {
+        addContains(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsSelection offsetStartsWith(String... value) {
+        addStartsWith(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsSelection offsetEndsWith(String... value) {
+        addEndsWith(StoryStampsColumns.OFFSET, value);
+        return this;
+    }
+
+    public StoryStampsSelection orderByOffset(boolean desc) {
+        orderBy(StoryStampsColumns.OFFSET, desc);
+        return this;
+    }
+
+    public StoryStampsSelection orderByOffset() {
+        orderBy(StoryStampsColumns.OFFSET, false);
+        return this;
+    }
+
     public StoryStampsSelection type(String... value) {
         addEquals(StoryStampsColumns.TYPE, value);
         return this;

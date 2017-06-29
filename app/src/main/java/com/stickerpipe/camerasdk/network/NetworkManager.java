@@ -151,7 +151,9 @@ public class NetworkManager {
                 storyBean.setId(story.id);
                 storyBean.setStoryId(story.id);
                 storyBean.setDataHash(story.dataHash);
-                storyBean.setIconLink(story.icon.links.get(density));
+                if (story.icon != null && story.icon.links != null) {
+                    storyBean.setIconLink(story.icon.links.get(density));
+                }
                 List<StoryStampsBean> stamps = new ArrayList<>();
                 for (StoriesResponse.Stamp stamp : story.content) {
                     StoryStampsBean stampBean = new StoryStampsBean();
@@ -160,6 +162,7 @@ public class NetworkManager {
                     stampBean.setLink(stamp.links.get(density));
                     stampBean.setPoints(gson.toJson(stamp.points));
                     stampBean.setType(stamp.type);
+                    stampBean.setOffset(gson.toJson(stamp.offset));
                     stampBean.setRotation(stamp.rotation);
                     stampBean.setScale(stamp.scale);
                     stampBean.setPositionType(stamp.position);
